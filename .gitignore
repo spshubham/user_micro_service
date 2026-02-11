@@ -1,5 +1,4 @@
 logs
 node_modules
-test
 .dockerignore
 package-lock.json
