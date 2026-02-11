@@ -1,6 +1,6 @@
 # 🚀 User Microservice — Production Ready
 
-A production-grade Node.js microservice implementing user management with caching, idempotency, message queues, observability, containerization, and CI/CD.
+A production-grade Node.js microservice implementing user management with caching, idempotency, message queues, observability, containerization, and CI/CD automation.
 
 ---
 
@@ -18,7 +18,6 @@ A production-grade Node.js microservice implementing user management with cachin
 | Testing          | Mocha + Chai + Supertest |
 | Containerization | Docker                   |
 | CI/CD            | GitHub Actions           |
-| Orchestration    | Kubernetes (YAML ready)  |
 
 ---
 
@@ -64,7 +63,6 @@ user-service/
 ├── test/
 ├── logs/
 ├── Dockerfile
-├── k8s-deployment.yaml
 └── .github/workflows/ci.yml
 ```
 
@@ -72,7 +70,7 @@ user-service/
 
 # ⚙️ Environment Variables
 
-Create `.env`:
+Create `.env` file:
 
 ```env
 PORT=3000
@@ -137,6 +135,8 @@ Body:
 GET /api/users
 ```
 
+Features:
+
 * Redis cached
 * TTL based
 
@@ -148,13 +148,15 @@ GET /api/users
 GET /api/users/:id
 ```
 
-* Object cache enabled
+Features:
+
+* Object-level Redis caching
 
 ---
 
 # 🧠 Idempotency
 
-Prevents duplicate user creation.
+Prevents duplicate resource creation.
 
 Flow:
 
@@ -178,7 +180,7 @@ MongoDB session transactions ensure:
 * No partial commits
 * Retry safety
 
-Disabled automatically in test environment.
+Automatically bypassed in test environment.
 
 ---
 
@@ -189,7 +191,7 @@ Disabled automatically in test environment.
 | Get all users | users:all     |
 | Get by id     | users:id:<id> |
 
-Invalidation on:
+Cache invalidated on:
 
 * Create
 * Update
@@ -206,7 +208,7 @@ Event: USER_CREATED
 Queue: user.created
 ```
 
-Payload:
+Payload example:
 
 ```json
 {
@@ -216,21 +218,23 @@ Payload:
 }
 ```
 
-Consumers can trigger:
+Consumers may include:
 
-* Email notifications
-* Analytics tracking
-* CRM sync
+* Email Service
+* Analytics Service
+* Notification Service
 
 ---
 
 # 🪵 Logging
 
-Using Winston:
+Implemented using Winston.
 
-* Request logs
-* Error logs
-* File + console output
+Logs include:
+
+* API requests
+* Errors
+* System events
 
 Log file:
 
@@ -242,7 +246,7 @@ logs/app.log
 
 # 📊 Monitoring
 
-Prometheus metrics exposed at:
+Prometheus metrics endpoint:
 
 ```
 GET /metrics
@@ -251,17 +255,17 @@ GET /metrics
 Tracks:
 
 * CPU usage
-* Memory
+* Memory usage
 * Event loop lag
 * Request metrics
 
-Grafana dashboards can consume this.
+Grafana dashboards can visualize these metrics.
 
 ---
 
 # 🧪 Unit Testing
 
-Frameworks:
+Frameworks used:
 
 * Mocha
 * Chai
@@ -274,23 +278,25 @@ Run tests:
 npm test
 ```
 
-Infra mocked:
+Infra behavior in tests:
 
 * Transactions bypassed
 * MQ disabled
 * Redis bypassed
 
+Ensures isolated unit testing.
+
 ---
 
 # 🐳 Docker
 
-## Build image
+## Build Image
 
 ```bash
 docker build -t user-service .
 ```
 
-## Run container
+## Run Container
 
 ```bash
 docker run -d -p 3000:3000 \
@@ -303,31 +309,17 @@ user-service
 
 ---
 
-# ☸️ Kubernetes (YAML Ready)
-
-Deploy:
-
-```bash
-kubectl apply -f k8s-deployment.yaml
-```
-
-Includes:
-
-* Deployment
-* Replica scaling
-* NodePort service
-
----
-
 # 🔁 CI/CD Pipeline
 
-GitHub Actions pipeline stages:
+Automated using GitHub Actions.
+
+Pipeline stages:
 
 1️⃣ Checkout code
 2️⃣ Install dependencies
 3️⃣ Run unit tests
 4️⃣ Build Docker image
-5️⃣ Push to Docker Hub
+5️⃣ Push image to Docker Hub
 
 Workflow file:
 
@@ -335,18 +327,18 @@ Workflow file:
 .github/workflows/ci.yml
 ```
 
-Secrets required:
+---
 
-```
-DOCKER_USER
-DOCKER_PASS (Access Token)
-```
+# 🔐 Required GitHub Secrets
+
+| Secret      | Description             |
+| ----------- | ----------------------- |
+| DOCKER_USER | Docker Hub username     |
+| DOCKER_PASS | Docker Hub access token |
 
 ---
 
-# 📦 Docker Image
-
-Pulled via:
+# 📦 Pull Built Image
 
 ```bash
 docker pull <username>/user-service:latest
@@ -366,7 +358,6 @@ docker pull <username>/user-service:latest
 ✔ Unit tests
 ✔ Docker containerization
 ✔ CI/CD automation
-✔ K8s deployment ready
 
 ---
 
@@ -376,9 +367,8 @@ docker pull <username>/user-service:latest
 * JWT authentication
 * Rate limiting
 * Helm charts
-* HPA autoscaling
+* Autoscaling
 * Canary deployments
-* Saga orchestration
 
 ---
 
