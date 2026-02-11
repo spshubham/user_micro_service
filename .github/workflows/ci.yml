@@ -1,0 +1,40 @@
+name: User Service CI/CD
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-test-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1️⃣ Checkout Code
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      # 2️⃣ Setup Node
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      # 3️⃣ Install Dependencies
+      - name: Install Dependencies
+        run: npm install
+
+      # 4️⃣ Run Unit Tests
+      - name: Run Tests
+        run: npm test
+
+      # 5️⃣ Docker Login
+      - name: Docker Login
+        run: echo "${{ secrets.DOCKER_PASS }}" | docker login -u "${{ secrets.DOCKER_USER }}" --password-stdin
+
+      # 6️⃣ Build Docker Image
+      - name: Build Docker Image
+        run: docker build -t ${{ secrets.DOCKER_USER }}/user-service:latest .
+
+      # 7️⃣ Push Image
+      - name: Push Docker Image
+        run: docker push ${{ secrets.DOCKER_USER }}/user-service:latest
